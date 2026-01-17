@@ -1,0 +1,28 @@
+======================================================================
+Viscosity Experiment: Euler vs Navier-Stokes Comparison
+======================================================================
+Initial conditions: 6
+Initial condition types: ['random', 'vortex', 'shear']
+Viscosities: [0.0, 0.0001, 0.001, 0.01]
+Grid resolution: 128×128
+Time span: 0 to 4.0
+Time step: 0.001
+Snapshots: 100
+Device: cuda
+Batch size: auto (all at once)
+Output: /mnt/home/lserrano/new_euler_solver/viscosity_experiment
+======================================================================
+
+==================================================
+Step 1: Generating initial conditions
+==================================================
+✓ Generated initial condition 1 (type: random)
+✓ Generated initial condition 2 (type: vortex)
+✓ Generated initial condition 3 (type: shear)
+✓ Generated initial condition 4 (type: random)
+✓ Generated initial condition 5 (type: vortex)
+✓ Generated initial condition 6 (type: shear)
+
+==================================================
+Step 2: Generating Euler trajectories
+==================================================
