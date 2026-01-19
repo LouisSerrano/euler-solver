@@ -648,14 +648,15 @@ def main():
                        help='Number of snapshots per trajectory (default: 20)')
     parser.add_argument('--nu-h', type=float, default=0.0,
                        help='Hyperviscosity coefficient (default: 0.0)')
-    parser.add_argument('--p-hyper', type=int, default=2,
-                       help='Hyperviscosity power p (p=2 -> del^4, p=4 -> del^8) (default: 2)')
+    parser.add_argument('--p-hyper', type=int, default=4,
+                       help='Hyperviscosity power (default: 4)')
     parser.add_argument('--filter-order', type=int, default=16,
                        help='Exponential filter order (default: 16)')
-    parser.add_argument('--adaptive', action='store_true',
-                       help='Use adaptive CFL-based time stepping')
-    parser.add_argument('--cfl', type=float, default=0.5,
-                       help='CFL safety factor for adaptive stepping (default: 0.5)')
+    parser.add_argument('--adaptive', action='store_false', dest='fixed_dt',
+                       help='Disable adaptive CFL-based time stepping')
+    parser.set_defaults(fixed_dt=False)
+    parser.add_argument('--cfl', type=float, default=0.2,
+                       help='CFL safety factor for adaptive stepping (default: 0.2)')
     parser.add_argument('--output-dir', type=str, default='viscosity_experiment',
                        help='Base output directory (default: viscosity_experiment)')
     parser.add_argument('--device', type=str, default='auto',
@@ -697,9 +698,9 @@ def main():
     print(f"Time span: 0 to {args.time}")
     print(f"Time step: {args.dt}")
     print(f"Snapshots: {args.snapshots}")
-    print(f"Hyperviscosity nu_h: {args.nu_h}, p: {args.p_hyper}")
-    print(f"Filter order: {args.filter_order}")
-    print(f"Adaptive time stepping: {args.adaptive} (CFL: {args.cfl})")
+    print(f"Hyperviscosity: {'enabled (nu_h=' + str(args.nu_h) + ')' if args.nu_h > 0 else 'disabled'}")
+    print(f"Spectral Stability: 2/3 Rule Truncation + Exp Filter (order {args.filter_order})")
+    print(f"Adaptive time stepping: {not args.fixed_dt} (CFL: {args.cfl})")
     print(f"Device: {device}")
     print(f"Batch size: {args.batch_size if args.batch_size else 'auto (all at once)'}")
     print(f"Output: {output_path.absolute()}")
@@ -739,7 +740,7 @@ def main():
     
     euler_results = generate_trajectory_batch(
         experiment, initial_conditions, [0.0], 'euler', batch_size=args.batch_size,
-        nu_h=args.nu_h, p=args.p_hyper, adaptive=args.adaptive, cfl=args.cfl
+        nu_h=args.nu_h, p=args.p_hyper, adaptive=(not args.fixed_dt), cfl=args.cfl
     )
     
     euler_time = time.time() - start_time
@@ -753,7 +754,7 @@ def main():
     
     ns_results = generate_trajectory_batch(
         experiment, initial_conditions, viscosities, 'navier_stokes', batch_size=args.batch_size,
-        nu_h=args.nu_h, p=args.p_hyper, adaptive=args.adaptive, cfl=args.cfl
+        nu_h=args.nu_h, p=args.p_hyper, adaptive=(not args.fixed_dt), cfl=args.cfl
     )
     
     ns_time = time.time() - start_time
