@@ -32,7 +32,7 @@ def generate_slice(
     N_total=8192,
     N_ns_ics=512,
     m_visc=16,
-    T=10.0,
+    T=4.0, #10.0
     n_snapshots=50,
     sim_res=512,
     save_res=256,
